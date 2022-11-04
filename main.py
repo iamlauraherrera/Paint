@@ -17,7 +17,6 @@ MINT = (216, 249, 204)
 
 RESOLUTION = (800, 500)
 
-
 class Paint:
     def __init__(self):
         pygame.init()
@@ -26,7 +25,10 @@ class Paint:
         self.clock = pygame.time.Clock()
         self.running = True
         self.color = BLACK
-        self.radius = 3
+        
+        self.width = 2
+        
+        self.state = 'PEN'
         
         self.drawing = False
         self.end = []
@@ -48,52 +50,55 @@ class Paint:
         self.pen_button = Button(self.screen, CYAN, 500, 5, 80, 40, content='LÁPIZ')
         self.paint_button = Button(self.screen, MINT, 585, 5, 80, 40, content='PINTAR')
         self.clean_button = Button(self.screen, WHITE, 670, 5, 80, 40, content='LIMPIAR')
-        self.x_button = Button(self.screen, RED, 755, 5, 40, 40, content='X', fontsize=40)
+        self.x_button = Button(self.screen, RED, 755, 5, 40, 40, content='X', fontsize=40, font_color=WHITE)
 
         #create left bar
-        pygame.draw.rect(self.screen, BLACK, (0, 50, 70, 300))
+        pygame.draw.rect(self.screen, BLACK, (0, 50, 64, 230))
+        
+        self.line_button = Button(self.screen, WHITE, 2, 50, 60, 60)
+        pygame.draw.line(self.screen, BLACK, (6, 54), (56, 106), width=2)
+        
+        self.rect_button = Button(self.screen, WHITE, 2, 112, 60, 60)
+        pygame.draw.rect(self.screen, BLACK, (6, 116, 52, 52), width=2)
+        
+        self.circle_button = Button(self.screen, WHITE, 2, 174, 60, 60)
+        pygame.draw.circle(self.screen, BLACK, (32, 204), 28, width=2)
+        
+        self.width1_button = Button(self.screen, WHITE, 2, 236, 60, 20)
+        pygame.draw.line(self.screen, BLACK, (6, 246), (56, 246), width=2)
+        
+        self.width2_button = Button(self.screen, WHITE, 2, 258, 60, 20)
+        pygame.draw.line(self.screen, BLACK, (6, 268), (56, 268), width=4)
 
 
-    def createTopBar(self):
-        pygame.draw.rect(self.screen, BLACK, (0, 0, 800, 50))
-        red_button = Button(self.screen, RED, 5, 5, 40, 40)
-        orange_button = Button(self.screen, ORANGE, 50, 5, 40, 40)
-        yellow_button = Button(self.screen, YELLOW, 95, 5, 40, 40)
-        lightgreen_button = Button(self.screen, LIGHT_GREEN, 140, 5, 40, 40)
-        green_button = Button(self.screen, GREEN, 185, 5, 40, 40)
-        cyan_button = Button(self.screen, CYAN, 230, 5, 40, 40)
-        blue_button = Button(self.screen, BLUE, 275, 5, 40, 40)
-        purple_button = Button(self.screen, PURPLE, 320, 5, 40, 40)
-
-    def createLeftBar(self):
-        pygame.draw.rect(self.screen, BLACK, (0, 80, 50, 200))
-
-    def scribbling(self, start, end):
-        dx = end[0] - start[0]
-        dy = end[1] - start [0]
-        distance = max(abs(dx), abs(dy))
-
-        for i in range(distance):
-            x = int(start[0] + float(i) / distance * dx)
-            y = int(start[1] + float(i) / distance * dy)
-            pygame.draw.circle(self.screen, self.color, (x, y), self.radius)
-
+    #EVENTOS GENERALES
     def events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
 
-            if pygame.mouse.get_pressed()[0]:
-                if len(self.end) == 0:
+            if self.state == 'PEN':
+                if pygame.mouse.get_pressed()[0]:
+                    if len(self.end) == 0:
+                        self.end.insert(0, event.pos)
+                        self.end.insert(0, event.pos)
+
                     self.end.insert(0, event.pos)
-                    self.end.insert(0, event.pos)
+                    self.end.pop()
 
-                self.end.insert(0, event.pos)
-                self.end.pop()
+                    pygame.draw.line(self.screen, self.color, self.end[1], self.end[0], self.width)
+                    
+                if event.type == pygame.MOUSEBUTTONUP:
+                    self.end = []
+            
+            elif self.state == 'LINE':
+                pass
+            
+            elif self.state == 'RECT':
+                pass
+                
 
-                pygame.draw.line(self.screen, self.color, self.end[1], self.end[0], self.radius)
-
-            #if event.type ==
+            #if event.type == 
 
 
     def mainLoop(self):
@@ -103,8 +108,17 @@ class Paint:
             mouse_pos = pygame.mouse.get_pos()
             mouse_pressed = pygame.mouse.get_pressed()
 
+            #BARRA SUPERIOR
             if self.red_button.isPressed(mouse_pos, mouse_pressed):
                 self.color = RED
+                
+            if self.x_button.isPressed(mouse_pos, mouse_pressed):
+                self.running = False
+                
+            #BARRA LATERAL    
+            if self.line_button.isPressed(mouse_pos, mouse_pressed):
+                self.state = 'LINE'
+                
 
 
             pygame.display.flip()
