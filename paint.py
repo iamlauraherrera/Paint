@@ -108,6 +108,25 @@ class Paint:
                     if not self.top_bar_rect.collidepoint(event.pos) and not self.left_bar_rect.collidepoint(event.pos):
                         self.unable_buttons = False
 
+            if self.state == 'CLEAN':
+                if pygame.mouse.get_pressed()[0]:
+                    if len(self.points) == 0:
+                        self.points.insert(0, event.pos)
+                        self.points.insert(0, event.pos)
+
+                    self.points.insert(0, event.pos)
+                    self.points.pop()
+
+                    pygame.draw.line(self.screen, WHITE, self.points[1], self.points[0], 10)
+
+                    if not self.top_bar_rect.collidepoint(event.pos) and not self.left_bar_rect.collidepoint(event.pos):
+                        self.unable_buttons = True
+
+                if event.type == pygame.MOUSEBUTTONUP:
+                    self.points = []
+                    if not self.top_bar_rect.collidepoint(event.pos) and not self.left_bar_rect.collidepoint(event.pos):
+                        self.unable_buttons = False
+
             elif self.state == 'LINE':
                 if event.type == pygame.MOUSEBUTTONDOWN and self.cont == 0:
                     if not self.top_bar_rect.collidepoint(event.pos) and not self.left_bar_rect.collidepoint(event.pos):
@@ -121,6 +140,7 @@ class Paint:
 
                     self.points = []
                     self.cont = 0
+                    
                 elif event.type == pygame.MOUSEBUTTONUP and self.cont == 0:
                     self.unable_buttons = False
 
@@ -263,10 +283,10 @@ class Paint:
                     pass
 
                 if self.clean_button.isPressed(mouse_pos, mouse_pressed):
-                    self.screen.fill(WHITE)
+                    self.state = 'CLEAN'
 
                 if self.x_button.isPressed(mouse_pos, mouse_pressed):
-                    self.running = False
+                    self.screen.fill(WHITE)
 
             # BARRA LATERAL
                 if self.line_button.isPressed(mouse_pos, mouse_pressed):
