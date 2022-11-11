@@ -32,10 +32,6 @@ class Paint:
         self.points = []
         self.cont = 0
 
-        self.drawing_line = False
-        self.drawing_rect = False
-        self.drawing_circle = False
-
         # create top bar
         self.top_bar_rect = pygame.Rect(0, 0, 800, 50)
         self.top_bar = pygame.Surface(self.top_bar_rect.size)
